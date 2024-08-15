@@ -30,7 +30,7 @@ const Header = () => {
   }, [cookies]);
 
   return (
-    <header className="flex fixed top-0 w-full bg-primary justify-between sm:py-4 sm:px-12 py-2 px-4 border-b border-gray-900/30">
+    <header className="flex fixed top-0  z-10 w-full bg-primary justify-between sm:py-4 sm:px-12 py-2 px-4 border-b border-gray-900/30">
       <Link to={"/"} className="text-5xl uppercase font-extrabold">
         News
       </Link>

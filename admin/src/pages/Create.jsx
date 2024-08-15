@@ -4,13 +4,13 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import { convertBase64 } from "../utils/converBase64";
+import { ArticleInput } from "../components";
 
 const Create = () => {
   const navigate = useNavigate();
   const [articleData, setArticleData] = useState({
     title: "",
     subtitle: "",
-    image: "",
     article: "",
     author: "",
   });
@@ -26,6 +26,7 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(articleData)
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URI}/article/post`,
@@ -66,20 +67,21 @@ const Create = () => {
           type="text"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
         />
-        <label className="font-semibold text-lg">Image</label>
+        {/* <label className="font-semibold text-lg">Image</label>
         <input
           onChange={handleChangeImage}
           name="image"
           type="file"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
-        />
+        /> */}
         <label className="font-semibold text-lg">Article</label>
-        <textarea
+        <ArticleInput articleData={articleData} setArticleData={setArticleData} />
+        {/* <textarea
           onChange={handleChange}
           name="article"
           type="text"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
-        />
+        /> */}
         <label className="font-semibold text-lg">Author</label>
         <input
           onChange={handleChange}

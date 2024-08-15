@@ -10,12 +10,8 @@ const NewsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: Object,
-      required: true,
-    },
     article: {
-      type: String,
+      type: [Object],
       required: true,
     },
     author: {

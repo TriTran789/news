@@ -1,17 +1,33 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const NewsList = () => {
   const [newsList, setNewsList] = useState([]);
 
   const fetchNewsList = async () => {
-    const res = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URI}/article/news-list`,
-      { withCredentials: true }
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URI}/article/news-list`,
+        { withCredentials: true }
+      );
+      setNewsList(res.data.newsList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const HeadImage = ({ article }) => {
+    const image = article.find((item) => item.type === "image");
+
+    return (
+      <img
+        src={image.value.url}
+        alt="image"
+        className="w-64 h-64 object-cover rounded-t-xl"
+      />
     );
-    setNewsList(res.data.newsList);
   };
 
   const handleRemove = async (e, id) => {
@@ -32,38 +48,18 @@ const NewsList = () => {
 
   useEffect(() => {
     fetchNewsList();
-  }, [newsList]);
-
-  // return (
-  //   <section className="bg-primary min-h-screen sm:pt-28 pt-20 sm:px-12 px-4 pb-12">
-  //     <div className="flex flex-wrap justify-center gap-12">
-  //       {newsList.map((item) => (
-  //         <div className="flex flex-col w-64">
-  //           <Link>
-  //             <img src={item.image.url} alt="image" className="w-64 h-64 object-cover" />
-  //             <div>
-  //               <h1 className="font-bold capitalize text-xl line-clamp-3 text-wrap">{item.title}</h1>
-  //               <h1>{item.author}</h1>
-  //             </div>
-  //           </Link>
-  //           <button>Remove</button>
-  //         </div>
-  //       ))}
-  //     </div>
-  //   </section>
-  // )
+  }, []);
 
   return (
     <section className="bg-primary min-h-screen sm:pt-28 pt-20 sm:px-12 px-4 pb-12">
       <div className="flex gap-12 flex-wrap justify-center">
         {newsList.map((item) => (
-          <div key={item._id} className="flex flex-col w-64 rounded-xl shadow-xl">
+          <div
+            key={item._id}
+            className="flex flex-col w-64 rounded-xl shadow-xl"
+          >
             <Link to={`/${item._id}`} className="flex flex-col">
-              <img
-                src={item.image.url}
-                alt="image"
-                className="w-64 h-64 object-cover rounded-t-xl"
-              />
+              <HeadImage article={item.article} />
               <div className="mt-4 px-4 flex flex-col h-28 justify-between">
                 <h1 className="font-bold capitalize text-xl line-clamp-3 text-wrap">
                   {item.title}
