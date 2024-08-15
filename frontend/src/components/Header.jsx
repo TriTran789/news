@@ -15,7 +15,6 @@ const Header = () => {
 
   useEffect(() => {
     const verifyCookie = async () => {
-      console.log(cookies)
       if (!cookies.token) {
         setUsername("");
         return;
