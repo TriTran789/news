@@ -55,7 +55,7 @@ router.post("/sign-in", async (req, res, next) => {
       return res.json({ success: false, message: "Incorrect password!" });
     }
     const token = createSecrectToken(user._id);
-    res.cookie("token", token, { withCredentials: true, httpOnly: false, sameSite: "none", secure: true, domain: "news-frontend-six.vercel.app" });
+    res.cookie("token", token, { withCredentials: true, httpOnly: false, sameSite: "none", secure: true });
     res.status(201).json({ success: true, message: "Sign In Successfully!" });
   } catch (error) {
     console.log(error);
