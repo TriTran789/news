@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import { Button } from "./ui";
 
 const Header = () => {
   const [cookies, removeCookie] = useCookies();

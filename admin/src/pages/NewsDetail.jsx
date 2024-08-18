@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 
 import { convertBase64 } from "../utils/converBase64";
+
+let newArticle = [];
 
 const NewsDetail = () => {
   const navigate = useNavigate();
@@ -14,13 +16,19 @@ const NewsDetail = () => {
     setNewsDetail({ ...newsDetail, [e.target.name]: e.target.value });
   };
 
-  const handleChangeImage = async (e) => {
-    const base64 = await convertBase64(e.target.files[0]);
-    setNewsDetail({ ...newsDetail, newImage: base64 });
+  const handleChangeAticle = async (e, index) => {
+    // setNewsDetail({ ...newsDetail, newImage: base64 });
+    if (e.target.type === "file") {
+      const base64 = await convertBase64(e.target.files[0]);
+      newArticle[index] = { ...newArticle[index], newValue: base64 };
+    } else {
+      newArticle[index] = { ...newArticle[index], value: e.target.value };
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNewsDetail({ ...NewsDetail, article: newArticle });
     try {
       const res = await axios.put(
         `${import.meta.env.VITE_BACKEND_URI}/article/put/${newsId}`,
@@ -48,6 +56,7 @@ const NewsDetail = () => {
         { withCredentials: true }
       );
       setNewsDetail(res.data.newsDetail);
+      newArticle = res.data.newsDetail.article;
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
@@ -80,21 +89,50 @@ const NewsDetail = () => {
           type="text"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
         />
-        <label className="font-semibold text-lg">Replace Image (Option)</label>
+        {/* <label className="font-semibold text-lg">Replace Image (Option)</label>
         <input
           onChange={handleChangeImage}
           name="image"
           type="file"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
-        />
+        /> */}
         <label className="font-semibold text-lg">Article</label>
-        <textarea
+        {/* <textarea
           value={newsDetail.article}
           onChange={handleChange}
           name="article"
           type="text"
           className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
-        />
+        /> */}
+        {newsDetail.article &&
+          newsDetail.article.map((item, index) => {
+            if (item.type === "text") {
+              return (
+                <textarea
+                  key={index}
+                  id={index}
+                  onChange={(e) => handleChangeAticle(e, index)}
+                  defaultValue={item.value}
+                  className="bg-primary text-base py-2 px-3 rounded-lg focus:outline-none"
+                />
+              );
+            }
+            if (item.type === "image") {
+              return (
+                <div key={index}>
+                  <img src={item.value.url} alt="image" />
+                  <div className="flex gap-8 py-4">
+                    Replace this photo
+                    <input
+                      type="file"
+                      id={index}
+                      onChange={(e) => handleChangeAticle(e, index)}
+                    />
+                  </div>
+                </div>
+              );
+            }
+          })}
         <label className="font-semibold text-lg">Author</label>
         <input
           value={newsDetail.author}

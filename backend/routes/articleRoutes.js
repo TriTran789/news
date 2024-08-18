@@ -1,6 +1,7 @@
 import express from "express";
 import NewsModel from "../mongoDB/models/news.js";
 import { v2 as cloudinary } from "cloudinary";
+import CommentModel from "../mongoDB/models/comment.js";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post("/post", async (req, res) => {
         const cloud_res = await cloudinary.uploader.upload(article[i].value, {
           folder: "news/image",
         });
-        console.log(cloud_res);
+        // console.log(cloud_res);
         newArticle.push({
           type: "image",
           value: { public_id: cloud_res.public_id, url: cloud_res.secure_url },
@@ -71,6 +72,7 @@ router.delete("/remove/:id", async (req, res) => {
       }
     });
     const db_res = await NewsModel.deleteOne({ _id: id });
+    await CommentModel.deleteMany({ newsId: id });
     res.status(200).json({ success: true, message: "News Removed!" });
   } catch (error) {
     console.log(error);
@@ -96,23 +98,36 @@ router.get("/:id", async (req, res) => {
 router.put("/put/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, subtitle, newImage, article, author } = req.body;
+    const { title, subtitle, article, author } = req.body;
     const newsDetail = await NewsModel.findById(id);
     if (!newsDetail)
       return res.json({ success: false, message: "News Not Found!" });
-    let image;
-    if (newImage) {
-      await cloudinary.uploader.destroy(newsDetail.image.public_id);
-      const cloud_res = await cloudinary.uploader.upload(newImage, {
-        folder: "news/image",
-      });
-      image = { public_id: cloud_res.public_id, url: cloud_res.secure_url };
-    } else {
-      image = newsDetail.image;
+    // let image;
+    // if (newImage) {
+    //   await cloudinary.uploader.destroy(newsDetail.image.public_id);
+    //   const cloud_res = await cloudinary.uploader.upload(newImage, {
+    //     folder: "news/image",
+    //   });
+    //   image = { public_id: cloud_res.public_id, url: cloud_res.secure_url };
+    // } else {
+    //   image = newsDetail.image;
+    // }
+
+    for (var i = 0; i < article.length; i++) {
+      if (article[i].newValue) {
+        const cloud_res = await cloudinary.uploader.upload(
+          article[i].newValue,
+          { folder: "news/image" }
+        );
+        article[i] = {
+          type: "image",
+          value: { public_id: cloud_res.public_id, url: cloud_res.secure_url },
+        };
+      }
     }
+
     newsDetail.title = title;
     newsDetail.subtitle = subtitle;
-    newsDetail.image = image;
     newsDetail.article = article;
     newsDetail.author = author;
 

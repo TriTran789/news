@@ -2,19 +2,28 @@ import { useState } from "react";
 
 import { convertBase64 } from "../utils/converBase64";
 
+let data = [];
+
 const ArticleInput = ({ articleData, setArticleData }) => {
   const [aritcleInput, setAritcleInput] = useState([]);
   const [index, setIndex] = useState(0);
   const [data, setData] = useState([]);
 
   const handleChange = async (e) => {
+    // if (e.target.type === "file") {
+    //   const base64 = await convertBase64(e.target.files[0]);
+    //   setData([...data, data[e.target.id] = {type: "image", value: base64}]);
+    // } else {
+    //   setData([...data, data[e.target.id] = {type: "text", value: e.target.value}]);
+    // }
+    // setArticleData({...articleData, article: data});
     if (e.target.type === "file") {
       const base64 = await convertBase64(e.target.files[0]);
-      setData([...data, data[e.target.id] = {type: "image", value: base64}]);
+      data[e.target.id] = { type: "image", value: base64 };
     } else {
-      setData([...data, data[e.target.id] = {type: "text", value: e.target.value}]);
+      data[e.target.id] = { type: "text", value: e.target.value };
     }
-    setArticleData({...articleData, article: data});
+    setArticleData({ ...articleData, article: data });
   };
 
   const addImage = () => {

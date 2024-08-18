@@ -7,6 +7,7 @@ import { v2 as cloudinary } from "cloudinary";
 import connectDB from "./mongoDB/connect.js";
 import userRoutes from "./routes/userRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use(express.json({ limit: "50mb" }));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/article", articleRoutes);
+app.use("/api/v1/comment", commentRoutes);
 
 app.get("/", (req, res) => {
   res.send("hello");
